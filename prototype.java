@@ -2,7 +2,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class Main {
+public class prototype {
     public static void main(String[] args) {
         String puzzle = "example";
         String expectedOutput = "blablabla";
