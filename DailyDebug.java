@@ -10,7 +10,6 @@ public class DailyDebug {
     }
 
     private static void createAndShowGui() {
-        // Date text
         LocalDate today = LocalDate.now();
         int day = today.getDayOfMonth();
         String suffix;
@@ -29,17 +28,14 @@ public class DailyDebug {
 
         String month = today.format(DateTimeFormatter.ofPattern("MMMM"));
 
-        // Pick a puzzle
         PuzzleBox box = new PuzzleBox();
         Puzzle puzzle = box.getRandomPuzzle();
 
-        // Window
         JFrame frame = new JFrame("DailyDebug");
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        // Top: date and instructions
         JLabel welcome = new JLabel(
             "Hello, today's date is " + day + suffix + " of " + month + " " + today.getYear() + ".",
             SwingConstants.CENTER);
@@ -51,14 +47,12 @@ public class DailyDebug {
         top.add(welcome);
         top.add(givePuzzle);
 
-        // Middle: the code snippet
         JTextArea codeArea = new JTextArea(puzzle.getCode());
         codeArea.setEditable(false);
         codeArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
         codeArea.setMargin(new Insets(10, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(codeArea);
 
-        // Bottom: answer field, button, result message
         HintTextField answerField = new HintTextField("give your answer", 20);
         JButton button = new JButton("Submit");
         JLabel result = new JLabel(" ", SwingConstants.CENTER);
@@ -73,7 +67,7 @@ public class DailyDebug {
             }
         };
         button.addActionListener(checkAnswer);
-        answerField.addActionListener(checkAnswer); // pressing Enter also submits
+        answerField.addActionListener(checkAnswer);
 
         JPanel inputRow = new JPanel(new FlowLayout());
         inputRow.add(answerField);
@@ -83,12 +77,11 @@ public class DailyDebug {
         bottom.add(inputRow);
         bottom.add(result);
 
-        // Put everything in the window
         frame.add(top, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(bottom, BorderLayout.SOUTH);
 
-        frame.setLocationRelativeTo(null); // center on screen
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
