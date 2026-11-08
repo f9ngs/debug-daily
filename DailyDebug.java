@@ -3,7 +3,7 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Framework {
+public class DailyDebug {
     static String answer = "a";
     public static void main(String[] args) {
         LocalDate today = LocalDate.now();
