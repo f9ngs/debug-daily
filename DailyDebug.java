@@ -1,11 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class DailyDebug {
-    static String answer = "a";
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> createAndShowGui());
+    }
+
+    private static void createAndShowGui() {
+        // Date text
         LocalDate today = LocalDate.now();
         int day = today.getDayOfMonth();
         String suffix;
@@ -24,25 +29,66 @@ public class DailyDebug {
 
         String month = today.format(DateTimeFormatter.ofPattern("MMMM"));
 
+        // Pick a puzzle
+        PuzzleBox box = new PuzzleBox();
+        Puzzle puzzle = box.getRandomPuzzle();
+
+        // Window
         JFrame frame = new JFrame("DailyDebug");
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
-        JLabel weclome = new JLabel("Hello, today's date is " + day + suffix + " of " + month + " " + today.getYear() + ".");
-        JLabel givePuzzle = new JLabel("Here's today's puzzle. Good luck!\n");
-        HintTextField submit = new HintTextField("give your answer", 30);
-        JButton button = new JButton("Submit");
-        button.addActionListener(e -> { answer = submit.getText();
-            if (answer.equals("example")) {
-                JLabel congrats = new JLabel("Correct Answer!");
-                frame.add(congrats);
-                frame.setVisible(true);
-            }
-        });
-        frame.add(button);
-        frame.add(weclome);
-        frame.add(givePuzzle);
-        frame.add(submit);
-        frame.setVisible(true);
+        frame.setLayout(new BorderLayout());
 
-    }}
+        // Top: date and instructions
+        JLabel welcome = new JLabel(
+            "Hello, today's date is " + day + suffix + " of " + month + " " + today.getYear() + ".",
+            SwingConstants.CENTER);
+        JLabel givePuzzle = new JLabel(
+            "Here's today's puzzle. What does it print? Good luck!",
+            SwingConstants.CENTER);
+
+        JPanel top = new JPanel(new GridLayout(2, 1));
+        top.add(welcome);
+        top.add(givePuzzle);
+
+        // Middle: the code snippet
+        JTextArea codeArea = new JTextArea(puzzle.getCode());
+        codeArea.setEditable(false);
+        codeArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
+        codeArea.setMargin(new Insets(10, 10, 10, 10));
+        JScrollPane scrollPane = new JScrollPane(codeArea);
+
+        // Bottom: answer field, button, result message
+        HintTextField answerField = new HintTextField("give your answer", 20);
+        JButton button = new JButton("Submit");
+        JLabel result = new JLabel(" ", SwingConstants.CENTER);
+
+        ActionListener checkAnswer = e -> {
+            if (puzzle.isCorrect(answerField.getText())) {
+                result.setForeground(new Color(0, 130, 0));
+                result.setText("Correct Answer!");
+            } else {
+                result.setForeground(Color.RED);
+                result.setText("Not quite, try again!");
+            }
+        };
+        button.addActionListener(checkAnswer);
+        answerField.addActionListener(checkAnswer); // pressing Enter also submits
+
+        JPanel inputRow = new JPanel(new FlowLayout());
+        inputRow.add(answerField);
+        inputRow.add(button);
+
+        JPanel bottom = new JPanel(new GridLayout(2, 1));
+        bottom.add(inputRow);
+        bottom.add(result);
+
+        // Put everything in the window
+        frame.add(top, BorderLayout.NORTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(bottom, BorderLayout.SOUTH);
+
+        frame.setLocationRelativeTo(null); // center on screen
+        frame.setVisible(true);
+    }
+}
